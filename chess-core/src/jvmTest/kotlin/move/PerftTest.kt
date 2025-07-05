@@ -3,6 +3,7 @@ package io.github.alluhemanth.chess.core.move
 import io.github.alluhemanth.chess.core.board.Board
 import io.github.alluhemanth.chess.core.game.GameState
 import io.github.alluhemanth.chess.core.game.GameUtils
+import io.github.alluhemanth.chess.core.move.LegalMoveGenerator
 import io.github.alluhemanth.chess.core.utils.FenUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
