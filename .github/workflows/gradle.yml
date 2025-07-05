@@ -30,6 +30,12 @@ jobs:
             os: ubuntu-latest
           - target: testReleaseUnitTest
             os: ubuntu-latest
+          - target: linuxX64Test
+            os: ubuntu-latest
+          - target: wasmJsTest
+            os: ubuntu-latest
+          - target: jvmTest
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -46,6 +52,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Set up Node.js for Wasm tests
+      if: matrix.target == 'wasmJsTest'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
     - name: Build with Gradle
       uses: gradle/gradle-build-action@ce999babab2de1c4b649dc15f0ee67e6246c994f
       with:
