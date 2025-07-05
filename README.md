@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.alluhemanth:chess-core:1.0.0")
+    implementation("io.github.alluhemanth:chess-core:1.0.1")
 }
 ```
 

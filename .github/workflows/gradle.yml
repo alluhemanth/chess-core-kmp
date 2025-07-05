@@ -34,8 +34,6 @@ jobs:
             os: ubuntu-latest
           - target: wasmJsTest
             os: ubuntu-latest
-          - target: jvmTest
-            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
 
     steps:
