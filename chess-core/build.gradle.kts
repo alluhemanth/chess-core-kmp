@@ -1,5 +1,4 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -7,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
-    id("org.jetbrains.dokka") version "2.0.0"
+    //id("org.jetbrains.dokka") version "2.0.0"
 }
 
 group = "io.github.alluhemanth"
@@ -93,6 +92,7 @@ tasks.withType<Test>().configureEach {
     }
 }
 
+/*
 dokka {
     moduleName.set("chess-core")
     dokkaPublications.html {
@@ -124,3 +124,4 @@ dokka {
     }
 
 }
+*/
