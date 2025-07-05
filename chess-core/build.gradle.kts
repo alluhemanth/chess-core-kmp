@@ -1,4 +1,5 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    id("org.jetbrains.dokka") version "2.0.0"
 }
 
 group = "io.github.alluhemanth"
@@ -55,7 +57,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "library", version.toString())
+    coordinates(group.toString(), "chess-core", version.toString())
 
     pom {
         name = "chess-core-kmp"
@@ -89,4 +91,36 @@ tasks.withType<Test>().configureEach {
     testLogging {
         events("passed", "failed")
     }
+}
+
+dokka {
+    moduleName.set("chess-core")
+    dokkaPublications.html {
+        suppressInheritedMembers.set(true)
+        failOnWarning.set(true)
+        outputDirectory.set(rootDir.resolve("build/dokka"))
+    }
+
+    dokkaSourceSets {
+        configureEach {
+            documentedVisibilities.set(
+                setOf(
+                    VisibilityModifier.Public,
+                    VisibilityModifier.Internal,
+                    VisibilityModifier.Protected,
+                )
+            )
+        }
+
+        named("commonMain") {
+            includes.from("dokka/dokka.md")
+        }
+    }
+
+    pluginsConfiguration.html {
+        customStyleSheets.from("dokka/assets/custom.css")
+        customAssets.from("dokka/assets/logo-icon.svg")
+        footerMessage.set("chess-core")
+    }
+
 }
