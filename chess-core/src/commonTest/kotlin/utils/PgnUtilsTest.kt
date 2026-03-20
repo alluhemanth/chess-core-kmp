@@ -150,4 +150,30 @@ class PgnUtilsTest {
         assertEquals(listOf("d4", "d5"), game2.moves)
         assertEquals("1/2-1/2", game2.result)
     }
+
+    @Test
+    fun `parsePgnGames should handle PGN with move comments`() {
+        val pgnString = """
+        [Event \"2026 Staff Daily Championship - Round 1\"]
+        [Site \"Chess.com\"]\n[Date \"2026.02.27\"]\n[Round \"1\"]
+        [White \"alien_roger\"]\n[Black \"erik\"]\n[Result \"*\"]
+        [Tournament \"https://www.chess.com/tournament/2026-staff-daily-championship\"]
+        [CurrentPosition \"r2q1rk1/1pp1ppbp/3p2p1/p1nP4/4P1b1/P1N2N2/1PPQBPPP/1R3RK1 w - - 3 14\"]
+        [Timezone \"UTC\"]\n[ECO \"B08\"]
+        [ECOUrl \"https://www.chess.com/openings/Pirc-Defense-Classical-Quiet-System\"]
+        [UTCDate \"2026.02.27\"]\n[UTCTime \"00:47:31\"]\n[WhiteElo \"1600\"]
+        [BlackElo \"1502\"]\n[TimeControl \"1/86400\"]\n[StartTime \"00:47:31\"]
+        [Link \"https://www.chess.com/game/daily/937238975\"]
+        
+        1. e4 {[%clk 23:47:31]} 1... d6 {[%clk 23:56:07]} 2. d4 {[%clk 22:14:29]} 2... Nf6 {[%clk 12:25:22]} 3. Nc3 {[%clk 6:30:01]} 3... g6 {[%clk 17:17:33]} 4. Nf3 {[%clk 8:06:40]} 4... Bg7 {[%clk 16:34:11]} 5. Be2 {[%clk 7:54:00]} 5... O-O {[%clk 16:18:36]} 6. O-O {[%clk 7:15:28]} 6... Nc6 {[%clk 18:08:15]} 7. Be3 {[%clk 7:11:18]} 7... Ng4 {[%clk 16:11:34]} 8. Qd2 {[%clk 0:00:00]} 8... Nxe3 {[%clk 22:49:05]} 9. Qxe3 {[%clk 2:58:15]} 9... Bg4 {[%clk 23:59:03]} 10. d5 {[%clk 3:57:18]} 10... Nb4 {[%clk 22:38:27]} 11. Qd2 {[%clk 0:00:00]} 11... a5 {[%clk 23:17:23]} 12. a3 {[%clk 5:12:58]} 12... Na6 {[%clk 22:38:51]} 13. Rab1 {[%clk 7:37:04]} 13... Nc5 {[%clk 23:50:49]} *
+        """
+
+        val games = PgnUtils.parsePgnGames(pgnString)
+
+        assertEquals(1, games.size)
+
+        assertTrue { games[0].moves.all {
+            move -> move.contains("clk")
+        } }
+    }
 }
