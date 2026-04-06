@@ -78,12 +78,15 @@ object PgnUtils {
                 token.startsWith("{") || token.startsWith("(") -> {
                     commentsForMove.add(token)
                 }
+
                 token.matches(Regex("""\d+\.{1,3}""")) -> {
                     // Ignore move numbers.
                 }
+
                 token in resultTokens -> {
                     // Ignore result tokens within the move list as they are handled separately.
                 }
+
                 else -> { // It's a SAN move
                     if (lastSanMove != null) {
                         moves.add(PgnMove(lastSanMove, commentsForMove.toList()))
@@ -130,7 +133,9 @@ object PgnUtils {
 
         for (pgnMove in pgnGame.moves) {
             try {
-                val move = sanUtils.sanToMove(pgnMove.san, currentBoard, currentGameState)
+                val move = sanUtils.sanToMove(pgnMove.san, currentBoard, currentGameState).copy(
+                    comments = pgnMove.comments
+                )
                 val (newBoard, newGameState) = GameUtils.makeMove(currentBoard, currentGameState, move)
                 currentBoard = newBoard
                 currentGameState = newGameState
