@@ -56,7 +56,7 @@ class PgnUtilsTest {
 
 
         val pgnGame = PgnUtils.parsePgn(pgnString)
-        assertEquals(expectedMoves, pgnGame.moves)
+        assertEquals(expectedMoves, pgnGame.moves.map { it.san })
     }
 
     @Test
@@ -66,7 +66,7 @@ class PgnUtilsTest {
         """.trimMargin()
         val expectedMoves = listOf("e4", "e5", "Nc6", "Bb5")
         val pgnGame = PgnUtils.parsePgn(pgnString)
-        assertEquals(expectedMoves, pgnGame.moves)
+        assertEquals(expectedMoves, pgnGame.moves.map { it.san })
     }
 
     @Test
@@ -115,7 +115,7 @@ class PgnUtilsTest {
         val pgnString = """1. e4 e5 2. Nf3"""
         val pgnGame = PgnUtils.parsePgn(pgnString)
         assertTrue(pgnGame.tags.isEmpty())
-        assertEquals(listOf("e4", "e5", "Nf3"), pgnGame.moves)
+        assertEquals(listOf("e4", "e5", "Nf3"), pgnGame.moves.map { it.san })
         assertEquals("*", pgnGame.result)
     }
 
@@ -142,12 +142,12 @@ class PgnUtilsTest {
 
         val game1 = games[0]
         assertEquals("Game 1", game1.tags["Event"])
-        assertEquals(listOf("e4", "e5"), game1.moves)
+        assertEquals(listOf("e4", "e5"), game1.moves.map { it.san })
         assertEquals("1-0", game1.result)
 
         val game2 = games[1]
         assertEquals("Game 2", game2.tags["Event"])
-        assertEquals(listOf("d4", "d5"), game2.moves)
+        assertEquals(listOf("d4", "d5"), game2.moves.map { it.san })
         assertEquals("1/2-1/2", game2.result)
     }
 
@@ -173,7 +173,7 @@ class PgnUtilsTest {
         assertEquals(1, games.size)
 
         assertTrue { games[0].moves.all {
-            move -> move.contains("clk")
+            move -> move.comments.any { it.contains("clk") }
         } }
     }
 }

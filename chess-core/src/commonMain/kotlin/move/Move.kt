@@ -14,7 +14,7 @@ import io.github.alluhemanth.chess.core.piece.PieceType
  * @property isCastlingKingside True if the move is kingside castling.
  * @property isCastlingQueenside True if the move is queenside castling.
  * @property isEnPassantCapture True if the move is an en passant capture.
- * @property comment Additional move comments, if any
+ * @property comments Additional move comments, if any
  */
 data class Move(
     val from: Square,
@@ -24,7 +24,7 @@ data class Move(
     val isCastlingKingside: Boolean = false,
     val isCastlingQueenside: Boolean = false,
     val isEnPassantCapture: Boolean = false,
-    val comment: String? = null,
+    val comments: List<String>? = null,
 ) {
     /**
      * Secondary constructor for moves with promotion specified as a character.
