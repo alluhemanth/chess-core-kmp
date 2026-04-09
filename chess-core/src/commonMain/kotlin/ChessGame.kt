@@ -329,4 +329,11 @@ class ChessGame(
         }
     }
 
+    /**
+     * Retrieve a read-only copy of the move history.
+     */
+    fun getMoveHistory(): List<Move> {
+        return moveHistory.toList()
+    }
+
 }
