@@ -329,4 +329,30 @@ class ChessGame(
         }
     }
 
+    /**
+     * Retrieve a read-only copy of the move history.
+     */
+    fun getMoveHistory(): List<Move> {
+        return moveHistory.toList()
+    }
+
+    /**
+     * Go to the move with specified index.
+     * @return true if the move index is valid, false otherwise.
+     *
+     * @example
+     * ```kotlin
+     * val game = ChessGame()
+     * game.makeSanMove("e4")
+     * game.makeSanMove("e5")
+     * game.goToMoveIndex(0)
+     * ```
+     */
+    fun goToMoveIndex(index: Int): Boolean {
+        if (index >= moveHistory.size - 1) return false
+        currentMoveIndex = index
+        replayMoves()
+        return true
+    }
+
 }
