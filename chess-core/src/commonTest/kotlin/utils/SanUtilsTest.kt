@@ -2,6 +2,7 @@ package io.github.alluhemanth.chess.core.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class SanUtilsTest {
@@ -31,6 +32,28 @@ class SanUtilsTest {
 
         val (board2, gameState2) = FenUtils.parseFen("r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R2QK2R b KQkq - 2 7")
         assertEquals("e8c8", SanUtils.sanToMove("O-O-O", board2, gameState2).toUci())
+    }
+
+    @Test
+    fun `test castling with check annotation`() {
+        val (board, gameState) = FenUtils.parseFen("rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4")
+        assertEquals("e1g1", SanUtils.sanToMove("O-O+", board, gameState).toUci())
+        assertTrue(SanUtils.sanToMove("O-O+", board, gameState).isCastlingKingside)
+
+        val (board2, gameState2) = FenUtils.parseFen("r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R2QK2R b KQkq - 2 7")
+        assertEquals("e8c8", SanUtils.sanToMove("O-O-O+", board2, gameState2).toUci())
+        assertTrue(SanUtils.sanToMove("O-O-O+", board2, gameState2).isCastlingQueenside)
+    }
+
+    @Test
+    fun `test castling with checkmate annotation`() {
+        val (board, gameState) = FenUtils.parseFen("rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4")
+        assertEquals("e1g1", SanUtils.sanToMove("O-O#", board, gameState).toUci())
+        assertTrue(SanUtils.sanToMove("O-O#", board, gameState).isCastlingKingside)
+
+        val (board2, gameState2) = FenUtils.parseFen("r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R2QK2R b KQkq - 2 7")
+        assertEquals("e8c8", SanUtils.sanToMove("O-O-O#", board2, gameState2).toUci())
+        assertTrue(SanUtils.sanToMove("O-O-O#", board2, gameState2).isCastlingQueenside)
     }
 
     @Test

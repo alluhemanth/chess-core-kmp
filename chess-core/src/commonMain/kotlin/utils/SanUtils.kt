@@ -52,10 +52,10 @@ object SanUtils {
     fun sanToMove(san: String, board: Board, gameState: GameState): Move {
         val legalMoves = legalMoveGenerator.getAllLegalMoves(board, gameState)
 
-        if (san == "O-O") return legalMoves.first { it.isCastlingKingside }
-        if (san == "O-O-O") return legalMoves.first { it.isCastlingQueenside }
-
         val cleanSan = san.replace(Regex("[+#]"), "")
+
+        if (cleanSan == "O-O") return legalMoves.first { it.isCastlingKingside }
+        if (cleanSan == "O-O-O") return legalMoves.first { it.isCastlingQueenside }
 
         val promotionPieceType = if (cleanSan.contains("=")) {
             when (cleanSan.last().uppercaseChar()) {
