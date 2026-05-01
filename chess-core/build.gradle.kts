@@ -1,6 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -13,7 +12,7 @@ plugins {
 }
 
 group = "io.github.alluhemanth"
-version = "1.0.1"
+version = "1.0.2"
 
 kotlin {
     jvm()
@@ -61,7 +60,7 @@ android {
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral()
 
     signAllPublications()
 
@@ -69,7 +68,7 @@ mavenPublishing {
 
     pom {
         name = "chess-core-kmp"
-        description = "A library."
+        description = "A Chess library."
         inceptionYear = "2025"
         url = "https://github.com/alluhemanth/chess-core-kmp/"
         licenses {
