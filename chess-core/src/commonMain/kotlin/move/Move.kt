@@ -78,4 +78,20 @@ data class Move(
         return "${from}${to}$promotion"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Move) return false
+
+        return from == other.from &&
+            to == other.to &&
+            promotionPieceType == other.promotionPieceType
+    }
+
+    override fun hashCode(): Int {
+        var result = from.hashCode()
+        result = 31 * result + to.hashCode()
+        result = 31 * result + (promotionPieceType?.hashCode() ?: 0)
+        return result
+    }
+
 }
