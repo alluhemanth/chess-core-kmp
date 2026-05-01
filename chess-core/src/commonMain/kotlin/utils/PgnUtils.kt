@@ -4,6 +4,7 @@ import io.github.alluhemanth.chess.core.board.Board
 import io.github.alluhemanth.chess.core.game.GameState
 import io.github.alluhemanth.chess.core.game.GameUtils
 import io.github.alluhemanth.chess.core.game.PgnGame
+import io.github.alluhemanth.chess.core.game.PgnMove
 
 /**
  * Utility object for parsing and handling PGN (Portable Game Notation) chess games.
@@ -54,26 +55,51 @@ object PgnUtils {
             }
         }
 
-        var fullMoveText = moveTextBuilder.toString().trim()
+        val fullMoveText = moveTextBuilder.toString().trim()
 
-        fullMoveText = fullMoveText
-            .replace(Regex("\\{[^}]*}"), "")
-            .replace(Regex("\\([^)]*\\)"), "")
-            .replace(Regex("\\d+\\.{1,3}\\s*"), "")
-            .trim()
+        // Find result and remove it from move text
+        val result = tags["Result"] ?: resultTokens.firstOrNull { fullMoveText.endsWith(it) } ?: "*"
+        val moveText = fullMoveText.removeSuffix(result).trim()
 
-        val lastToken = fullMoveText.split(Regex("\\s+")).lastOrNull()
-        val result = tags["Result"] ?: if (lastToken in resultTokens) lastToken!! else "*"
-
-        if (lastToken == result) {
-            fullMoveText = fullMoveText.removeSuffix(result).trim()
-        } else if (tags["Result"] != null) {
-            fullMoveText = fullMoveText.replace(Regex("\\s+${Regex.escape(result)}\\s*$"), "").trim()
+        val moves = mutableListOf<PgnMove>()
+        if (moveText.isEmpty()) {
+            return PgnGame(tags, moves, result)
         }
 
-        val moves = fullMoveText
-            .split(Regex("\\s+"))
-            .filter { it.isNotEmpty() && it !in resultTokens }
+        // Regex to find all tokens: move numbers, comments, or anything else (SAN moves)
+        val tokenRegex = Regex("""\d+\.{1,3}|(\{[^}]*\})|(\([^)]*\))|[^\s{}()]+""")
+        val tokens = tokenRegex.findAll(moveText).map { it.value }.toList()
+
+        var lastSanMove: String? = null
+        val commentsForMove = mutableListOf<String>()
+
+        for (token in tokens) {
+            when {
+                token.startsWith("{") || token.startsWith("(") -> {
+                    commentsForMove.add(token)
+                }
+
+                token.matches(Regex("""\d+\.{1,3}""")) -> {
+                    // Ignore move numbers.
+                }
+
+                token in resultTokens -> {
+                    // Ignore result tokens within the move list as they are handled separately.
+                }
+
+                else -> { // It's a SAN move
+                    if (lastSanMove != null) {
+                        moves.add(PgnMove(lastSanMove, commentsForMove.toList()))
+                        commentsForMove.clear()
+                    }
+                    lastSanMove = token
+                }
+            }
+        }
+
+        if (lastSanMove != null) {
+            moves.add(PgnMove(lastSanMove, commentsForMove.toList()))
+        }
 
         return PgnGame(tags, moves, result)
     }
@@ -105,14 +131,16 @@ object PgnUtils {
         var (currentBoard, currentGameState) = FenUtils.parseFen(FenUtils.DEFAULT_FEN)
         val sanUtils = SanUtils
 
-        for (sanMove in pgnGame.moves) {
+        for (pgnMove in pgnGame.moves) {
             try {
-                val move = sanUtils.sanToMove(sanMove, currentBoard, currentGameState)
+                val move = sanUtils.sanToMove(pgnMove.san, currentBoard, currentGameState).copy(
+                    comments = pgnMove.comments
+                )
                 val (newBoard, newGameState) = GameUtils.makeMove(currentBoard, currentGameState, move)
                 currentBoard = newBoard
                 currentGameState = newGameState
             } catch (e: IllegalArgumentException) {
-                println("Warning: Could not apply move '$sanMove': ${e.message}")
+                println("Warning: Could not apply move '${pgnMove.san}': ${e.message}")
                 break
             }
         }

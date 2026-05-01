@@ -9,6 +9,6 @@ package io.github.alluhemanth.chess.core.game
  */
 data class PgnGame(
     val tags: Map<String, String> = emptyMap(),
-    val moves: List<String> = emptyList(),
+    val moves: List<PgnMove> = emptyList(),
     val result: String = "*"
 )
